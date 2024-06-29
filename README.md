@@ -2,9 +2,9 @@
 Овај репозиторијум демонстрира повезивање U-Blox LEA-6S GPS Click плоче на De1-SoC плочу и приказује једноставну апликацију за ишчитавање релевантних *GPS* података.
 
 Циљ приложеног садржаја је да омогући додатне информације о:
-1. Повезивању *GPS Click* компоненте кориштењем *UART* интерфејса (*RX* и *TX* пинови) на *De1-SoC* плочу
+1. Повезивању *GPS Click* плочице кориштењем *UART* интерфејса (*RX* и *TX* пинови) на *De1-SoC* плочу
 2. Кориштењу *gpsd* алата за рад са *GPS* подацима
-3. Подешавању *Buildroot* окружења тако да се омогући детектовање примљених података
+3. Подешавању *Buildroot-а* тако да се омогући детектовање примљених података
 4. Ишчитавању релевантних информација добијених од *GPS* уређаја
 
 ## Текст задатка
@@ -28,7 +28,7 @@
 
 За више информација о *GPS Click* плочи неопходно је посјетити [GPS Click](https://www.mikroe.com/gps-click).
 
-Да би се детаљније упознали са компонентом неопходно је прочитати [*datasheet*](https://download.mikroe.com/documents/datasheets/LEA-6S_datasheet.pdf).
+Да би се детаљније упознали са плочом неопходно је прочитати [*datasheet*](https://download.mikroe.com/documents/datasheets/LEA-6S_datasheet.pdf).
 
 Поред секције *1.10 Protocols and interfaces* која ће се спомињати и у наставку текста, битна секција је и *7 Default settings* гдје видимо да за серијски порт треба да се поставе сљедећи параметри:
 
@@ -51,13 +51,13 @@ stty -F /dev/ttyS1 9600 cs8 -cstopb -parenb
 
 ## Повезивање *GPS Click* компоненте на *De1-SoC* плочу
 
-На слици испод је приказан начин повезивања *GPS Click* на *De1-SoC* плочу.
+На слици испод је приказан начин повезивања *GPS Click* плочице на *De1-SoC* плочу, при чему ће у наставку текста бити објашњени поједини дијелови са слике.
 
 ![ploca-gps](https://github.com/novicatepic/-------/assets/62095336/ca5be09b-2423-4071-b9c6-9a075bd03c38)
 
-Као што се може видјети са слике, спојени су уземљење и напајање (3.3V), те је TX пин *GPS Click* плоче спојен на *RX* пин *De1-SoC* плоче, као и *RX* пин *GPS Click* плоче на *TX* пин *De1-SoC* плоче.
+Спојени су уземљење и напајање (3.3V), те је TX пин *GPS Click* плоче спојен на *RX* пин *De1-SoC* плоче, као и *RX* пин *GPS Click* плоче на *TX* пин *De1-SoC* плоче.
 
-На страници бр. 13 [*сљедећег линка*](https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/DE1-SoC%20schematic.pdf) могу да се виде пинови за напајање и уземљене за *GPIO1* контролер.
+На страници бр. 13 [*сљедећег линка*](https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/DE1-SoC%20schematic.pdf) могу да се виде пинови за напајање и уземљене за *GPIO1*.
 
 Антена је такође спојена на *GPS Click*.
 
@@ -76,7 +76,7 @@ stty -F /dev/ttyS1 9600 cs8 -cstopb -parenb
 
 ## Прилагођавање конфигурације SPL-а и U-Boot окружења
 
-Конфигурацију *SPL-а* вршимо примјеном *patch* фајла подешавањем опције *Bootloaders -> U-Boot -> Custom U-Boot patches* у конфигурацији *Buildroot-а*, гдје постављамо путању у односу на на *board* фолдер, у овом случају на *board/terasic/de1soc_cyclone5/patches/de1-soc-handoff.patch*.
+Конфигурацију *SPL-а* вршимо примјеном *patch* фајла подешавањем опције *Bootloaders -> U-Boot -> Custom U-Boot patches* у конфигурацији *Buildroot-а*, гдје постављамо путању *board/terasic/de1soc_cyclone5/patches/de1-soc-handoff.patch*.
 
 На слици испод је приказано гдје у конфигурацији *Buildroot-а* након покретања команде *make menuconfig* из кровног директоријума може да се подеси дата опција.
 
@@ -86,7 +86,7 @@ stty -F /dev/ttyS1 9600 cs8 -cstopb -parenb
 
 ## Подешавање *Buildroot* окружења употребом *menuconfig-а* и модификавија *rootfs overlay-а*
 
-Да би се омогућио *gpsd* алат, неопходно је у коријеном фолдеру *Buildroot* покренути команду
+Да би се омогућио *gpsd* алат, неопходно је у корјеном фолдеру *Buildroot* покренути команду
 
 ```
 make menuconfig
@@ -96,7 +96,7 @@ make menuconfig
 
 *Target Packages -> Hardware Handling -> gpsd*
 
-Сљедећи корак је да се изабере */dev/ttyS1* у оквиру опције *Where to look for GPSes*, те да се укључе *client debugging support* и *profilling support* као двије опционе ставке (нису кориштене у раду, али могу да буду корисне), те протоколи приказани на слици.
+Сљедећи корак је да се изабере */dev/ttyS1* у оквиру опције *Where to look for GPSes*, те протоколи приказани на слици. Опционо могу да се укључе *client debugging support* и *profilling support*, који су укључени али нису кориштени.
 
 Да би се детаљније упознали са кориштеним протоколима за *GPS Click*, неопходно је посјетити секцију *1.10 Protocols and interfaces* у [*datasheet-у*](https://download.mikroe.com/documents/datasheets/LEA-6S_datasheet.pdf).
 
@@ -155,7 +155,7 @@ sudo dd if=sdcard.img of=/dev/sdb bs=1M
 source ../set-environment.sh
 ```
 
-Након тога, кроскомпајлирање се врши наредном командом
+Након тога, кроскомпајлирање се врши наредном командом (гдје *path_to_buildroot* представља путању до *buildroot* фолдера)
 
 ```
 arm-linux-gcc gps.c -o gps -I<path_to_buildroot>/output/staging/usr/include -L<path_to_buildroot>/output/staging/usr/lib -lgps -ldbus-1 -lsystemd -lcap
@@ -163,7 +163,7 @@ arm-linux-gcc gps.c -o gps -I<path_to_buildroot>/output/staging/usr/include -L<p
 
 Разлог за употребу ове команде је проблем са кроскомпајлирањем библиотеке која се укључује са *include "gps.h"* јер је кроскомпајлирање базирано на *SCons* гдје је неопходно модификовати *SConstruct* фајл који је написан у *Python* програмском језику, па је искориштено једно практичније рјешење.
 
-Да би се ријешио проблем, унутар *Buildroot-а" већ постоји дата библиотека због укључивања *gpsd-а*, те ју је само неопходно пронаћи и укључити и друге библиотеке од којих она зависи при кроскомпајлирању.
+Да би се ријешио проблем, унутар *Buildroot-а* већ постоји дата библиотека због укључивања *gpsd-а*, те ју је само неопходно пронаћи и укључити и друге библиотеке од којих она зависи при кроскомпајлирању.
 
 > [!NOTE]
 У оквиру *GPS-Click* остављен је и фајл *gps-manual.c* којим је демонстрирано читање података, без додатног парсирања, директним приступом интерфејсу гдје се примају *GPS* подаци у одговарајућим форматима. Овакав приступ није препоручљив.

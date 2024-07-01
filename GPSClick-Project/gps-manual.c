@@ -56,7 +56,6 @@ int configure_uart(int uart_fd) {
 }
 
 void read_gps_data(int uart_fd) {
-    printf("In read\n");
     char buffer[512];
     int n;
     char sentence[1024];
@@ -66,12 +65,13 @@ void read_gps_data(int uart_fd) {
     while (1) {
         // Read data from UART
         n = read(uart_fd, buffer, sizeof(buffer) - 1);
-        printf("n = %d\n", n);
+        // Print buffer
         printf("Buffer = %s\n", buffer);
         if (n > 0) {
             buffer[n] = '\0'; // Null-terminate the string
 	    
             // Process buffer to extract NMEA sentences
+            // Try to parse sentences
             for (int i = 0; i < n; i++) {
                 if (buffer[i] == '$') {
                     start_found = 1;
@@ -107,12 +107,9 @@ int main() {
         printf("Unable to open UART device");
         return 1;
     }
-    printf("After open\n");
     
     // Configure the UART
     //configure_uart(uart_fd);
-    
-    printf("After configure\n");
     
     //  and print GPS data
     read_gps_data(uart_fd);
